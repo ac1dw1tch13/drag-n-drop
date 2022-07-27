@@ -1,45 +1,71 @@
-const list_items = document.querySelectorAll('.list-item');
-const lists = document.querySelectorAll('.list');
+// const listItems = document.querySelectorAll('.list-item')
+// const lists = document.querySelectorAll('.list')
+const mamaDiv = document.querySelector('.lists')
 
-let draggedItem = null;
+let draggedItem = null; 
 
-for (let i = 0; i < list_items.length; i++) {
-	const item = list_items[i];
 
-	item.addEventListener('dragstart', function () {
-		draggedItem = item;
-		setTimeout(function () {
-			item.style.display = 'none';
-		}, 0)
-	});
+   mamaDiv.addEventListener('dragstart', function (e) {
+      draggedItem = e.target;
 
-	item.addEventListener('dragend', function () {
-		setTimeout(function () {
-			draggedItem.style.display = 'block';
-			draggedItem = null;
-		}, 0);
-	})
+      e.dataTransfer.setData('text/plain', draggedItem)
+      e.dataTransfer.effectAllowed='move'
+      setTimeout(function () {
+          e.target.style.display = 'none'
 
-	for (let j = 0; j < lists.length; j ++) {
-		const list = lists[j];
+      },0)
 
-		list.addEventListener('dragover', function (e) {
-			e.preventDefault();
-		});
-		
-		list.addEventListener('dragenter', function (e) {
-			e.preventDefault();
-			this.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-		});
+  });
 
-		list.addEventListener('dragleave', function (e) {
-			this.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-		});
 
-		list.addEventListener('drop', function (e) {
-			console.log('drop');
-			this.append(draggedItem);
-			this.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-		});
-	}
-}
+
+    mamaDiv.addEventListener('dragend', function (e) {
+        setTimeout(function () {
+            e.target.style.display = 'block'
+            draggedItem = null;
+        },0)
+
+    });
+///////////////////////////////////////////////////////////////////////
+
+    mamaDiv.addEventListener('dragenter', function(e) {
+        if (e.dataTransfer.types[0] === 'text/plain') {
+            e.preventDefault();
+          }
+        
+    });
+
+
+    mamaDiv.addEventListener('dragover', function(e) {
+        if (e.dataTransfer.types[0] === 'text/plain') {
+            e.preventDefault();
+          }
+          e.target.closest('.lists').classList.add('dragenter')
+
+    });
+
+
+    mamaDiv.addEventListener('dragleave', function(e) {
+        if (e.relatedTarget.closest('.list-item') !== draggedItem)
+        e.target.closest('.lists').classList.remove('dragenter')
+
+      })
+  
+
+
+
+    
+
+    mamaDiv.addEventListener('drop', function(e) {
+        e.preventDefault();
+            if ( e.target !== e.target.closest('.list-item')) {
+             e.target.append(draggedItem)
+             e.target.closest('.lists').classList.add('drop')
+
+            }
+            
+
+
+
+    });
+    
